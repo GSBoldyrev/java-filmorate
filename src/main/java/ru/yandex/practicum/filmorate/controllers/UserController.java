@@ -2,7 +2,8 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.BadRequestException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -27,8 +28,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody @Valid User user) throws ValidationException {
+    public User addUser(@RequestBody @Valid User user) throws BadRequestException {
         validate(user);
+        // По ТЗ - если у пользователя не задано имя, то вместо имени использовать логин.
+        if ((user.getName() == null) || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         user.setId(generateId());
         users.put(user.getId(), user);
         log.info("Пользователь добавлен");
@@ -36,10 +41,13 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @Valid User user) throws ValidationException {
+    public User updateUser(@RequestBody @Valid User user) throws BadRequestException {
         validate(user);
         if (!users.containsKey(user.getId())) {
-            throw new ValidationException("Пользователь не найден!");
+            throw new NotFoundException("Пользователь не найден!");
+        }
+        if ((user.getName() == null) || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
         log.info("Данные пользователя обновлены");
