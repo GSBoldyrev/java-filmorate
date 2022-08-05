@@ -44,7 +44,7 @@ public class UserController {
     public User updateUser(@RequestBody @Valid User user) throws BadRequestException {
         validate(user);
         if (!users.containsKey(user.getId())) {
-            throw new NotFoundException("Пользователь не найден!");
+            throw new NotFoundException("Пользователь по ID " + user.getId() + " не найден!");
         }
         if ((user.getName() == null) || user.getName().isBlank()) {
             user.setName(user.getLogin());

@@ -40,7 +40,7 @@ public class FilmController {
     public Film updateFilm(@RequestBody @Valid Film film) throws BadRequestException {
         validate(film);
         if (!films.containsKey(film.getId())) {
-            throw new NotFoundException("Фильм не найден!");
+            throw new NotFoundException("Фильм по ID " + film.getId() + " не найден!");
         }
         films.put(film.getId(), film);
         log.info("Фильм обновлен");

@@ -15,8 +15,7 @@ class ValidatorTest {
     @Test
     public void shouldNotValidateOldFilm() {
         Film veryOldFilm =
-                new Film("Name", "Description"
-                        , LocalDate.of(1600, 11, 11), 1);
+                new Film("Name", "Description", LocalDate.of(1600, 11, 11), 1);
 
         BadRequestException e = assertThrows(BadRequestException.class, () -> validate(veryOldFilm));
         assertEquals("Кино еще не изобрели!", e.getMessage());
@@ -25,8 +24,7 @@ class ValidatorTest {
     @Test
     public void shouldValidateFirstFilm() {
         Film firstFilm =
-                new Film("Name", "Description"
-                        , LocalDate.of(1895, 12, 28), 1);
+                new Film("Name", "Description", LocalDate.of(1895, 12, 28), 1);
 
         assertDoesNotThrow(() -> validate(firstFilm));
     }
