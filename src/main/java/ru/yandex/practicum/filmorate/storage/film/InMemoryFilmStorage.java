@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int id = 1;
 
     @Override
-    public Film addFilm(Film film) {
+    public Film add(Film film) {
         validate(film);
         film.setId(generateId());
         films.put(film.getId(), film);
@@ -30,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film film) {
+    public Film update(Film film) {
         validate(film);
         if (!films.containsKey(film.getId())) {
             throw new NotFoundException("Фильм по ID " + film.getId() + " не найден!");
@@ -41,12 +41,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film deleteFilm(Film film) {
+    public Film delete(Film film) {
         return films.remove(film.getId());
     }
 
     @Override
-    public Film getFilmById(int id) {
+    public Film getById(int id) {
         if (films.containsKey(id)) {
             log.info("Вывод фильма по ID " + id);
             return films.get(id);
@@ -56,15 +56,18 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getFilms() {
+    public List<Film> getAll() {
         log.info("Вывод списка всех фильмов");
         return new ArrayList<>(films.values());
     }
 
     @Override
-    public List<Film> getMostPopularFilms(int count) {
+    public List<Film> getMostPopular(int count) {
         log.info("Вывод списка наиболее популярных фильмов");
-        return films.values().stream().sorted(this::compare).limit(count).collect(Collectors.toList());
+        return films.values().stream()
+                .sorted(this::compare)
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     private int generateId() {

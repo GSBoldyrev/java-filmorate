@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class InMemoryUserStorage implements UserStorage {
     private int id = 1;
 
     @Override
-    public User addUser(User user) {
+    public User add(User user) {
         validate(user);
         if ((user.getName() == null) || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -32,7 +32,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User updateUser(User user) {
+    public User update(User user) {
         validate(user);
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException("Пользователь по ID " + user.getId() + " не найден!");
@@ -46,12 +46,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User deleteUser(User user) {
+    public User delete(User user) {
         return users.remove(user.getId());
     }
 
     @Override
-    public User getUserById(int id) {
+    public User getById(int id) {
         if (users.containsKey(id)) {
             log.info("Вывод пользователя по ID " + id);
             return users.get(id);
@@ -61,7 +61,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         log.info("Вывод всех пользователей");
         return new ArrayList<>(users.values());
     }

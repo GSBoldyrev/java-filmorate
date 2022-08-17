@@ -21,7 +21,7 @@ public class User {
     @Past
     private final LocalDate birthday;
 
-    private Set<Integer> friends = new HashSet<>();
+    private Set<Integer> friendsId = new HashSet<>();
 
     public void setId(int id) {
         this.id = id;
@@ -31,11 +31,11 @@ public class User {
         this.name = name;
     }
 
-    public Set<Integer> getFriends() {
-        return friends;
+    public Set<Integer> getFriendsId() {
+        return friendsId;
     }
 
-    public void setFriends(Set<Integer> friends) {
-        this.friends = friends;
+    public void setFriendsId(Set<Integer> friendsId) {
+        this.friendsId = friendsId;
     }
 }

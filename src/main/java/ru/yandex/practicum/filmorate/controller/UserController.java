@@ -1,11 +1,10 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,52 +15,50 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService service;
-    private final UserStorage storage;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserService service, UserStorage storage) {
-        this.service = service;
-        this.storage = storage;
+    public UserController(UserService service) {
+        this.userService = service;
     }
 
     @GetMapping
     public List<User> getUsers() {
-        return storage.getUsers();
+        return userService.getAll();
     }
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
-        return storage.getUserById(id);
+        return userService.getById(id);
     }
 
     @PostMapping
     public User addUser(@RequestBody @Valid User user) {
-        return storage.addUser(user);
+        return userService.add(user);
     }
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
-        return storage.updateUser(user);
+        return userService.update(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public User addToFriends(@PathVariable int id, @PathVariable int friendId) {
-        return service.addToFriends(storage.getUserById(id), storage.getUserById(friendId));
+        return userService.addFriend(userService.getById(id), userService.getById(friendId));
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public User removeFromFriends(@PathVariable int id, @PathVariable int friendId) {
-        return service.removeFromFriends(storage.getUserById(id), storage.getUserById(friendId));
+        return userService.removeFriend(userService.getById(id), userService.getById(friendId));
     }
 
     @GetMapping("/{id}/friends")
     public Set<User> getFriends(@PathVariable int id) {
-        return service.getFriends(storage.getUserById(id));
+        return userService.getFriends(userService.getById(id));
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public Set<User> getMutualFriends(@PathVariable int id, @PathVariable int otherId) {
-        return service.getMutualFriends(storage.getUserById(id), storage.getUserById(otherId));
+        return userService.getMutualFriends(userService.getById(id), userService.getById(otherId));
     }
 }
