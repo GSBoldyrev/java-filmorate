@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.misc;
 
-import ru.yandex.practicum.filmorate.exceptions.BadRequestException;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
