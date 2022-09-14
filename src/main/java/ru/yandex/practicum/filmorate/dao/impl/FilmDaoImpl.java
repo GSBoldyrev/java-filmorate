@@ -117,8 +117,11 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public int removeLike(int filmId, int userId) {
         String sqlQuery = "delete from movie_likes where film_id = ? and user_id = ?";
-
-        return jdbcTemplate.update(sqlQuery, filmId, userId);
+        int result = jdbcTemplate.update(sqlQuery, filmId, userId);
+        if (result != 1) {
+            throw new NotFoundException("передан неверный идентификатор!");
+        }
+        return result;
     }
 
     private Film mapRowToFilm (ResultSet resultSet, int rowNum) throws SQLException {
