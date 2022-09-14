@@ -99,11 +99,8 @@ public class UserDaoImpl implements UserDao {
     public List<User> getFriends (int userId) {
         String sqlQuery = "select user_id, e_mail, login, name, birthday from users " +
                 "where user_id in (select friend_id from friends where user_id = ?)";
-        try {
+
             return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
-        } catch (DataAccessException e) {
-            throw new NotFoundException("Пользователь по ID " + userId + " не найден!");
-        }
     }
 
     @Override
@@ -112,11 +109,8 @@ public class UserDaoImpl implements UserDao {
                 "where user_id in " +
                 "(select friend_id from friends where user_id = ? and friend_id not in (?, ?) and " +
                 "friend_id in (select friend_id from friends where user_id = ?))";
-        try {
+
             return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, friendId, userId, friendId);
-        } catch (DataIntegrityViolationException e) {
-            throw new NotFoundException("передан неверный идентификатор!");
-        }
     }
 
     private User mapRowToUser (ResultSet resultSet, int rowNum) throws SQLException {

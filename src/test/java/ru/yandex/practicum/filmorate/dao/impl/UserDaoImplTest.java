@@ -100,8 +100,8 @@ class UserDaoImplTest {
         NotFoundException e1 = assertThrows(NotFoundException.class, () -> userDao.addFriend(-1, 2));
         NotFoundException e2 = assertThrows(NotFoundException.class, () -> userDao.addFriend(1, -2));
 
-        assertEquals("Пользователь по ID -1 не найден!", e1.getMessage());
-        assertEquals("Пользователь по ID -2 не найден!", e2.getMessage());
+        assertEquals("передан неверный идентификатор!", e1.getMessage());
+        assertEquals("передан неверный идентификатор!", e2.getMessage());
     }
 
     @Test
@@ -113,8 +113,8 @@ class UserDaoImplTest {
 
     @Test
     void removeFriendWithWrongId() {
-        int result1 = userDao.removeFriend(-2, 3);
-        int result2 = userDao.removeFriend(2, -3);
+       int result1 = userDao.removeFriend(-1, 2);
+       int result2 = userDao.removeFriend(1, -2);
 
         assertEquals(0, result1);
         assertEquals(0, result2);
@@ -129,9 +129,9 @@ class UserDaoImplTest {
 
     @Test
     void getFriendsWithWrongId() {
-        NotFoundException e = assertThrows(NotFoundException.class, () -> userDao.getFriends(55));
+        List<User> friends = userDao.getFriends(55);
 
-        assertEquals("Пользователь по ID 55 не найден!", e.getMessage());
+        assertEquals(0, friends.size());
     }
 
     @Test
@@ -143,10 +143,8 @@ class UserDaoImplTest {
 
     @Test
     void getMutualFriendsWithWrongId() {
-        NotFoundException e1 = assertThrows(NotFoundException.class, () -> userDao.getMutualFriends(-2, 4));
-        NotFoundException e2 = assertThrows(NotFoundException.class, () -> userDao.getMutualFriends(2, -4));
+        List<User> friends = userDao.getMutualFriends(-2, 4);
 
-        assertEquals("Пользователь по ID -2 не найден!", e1.getMessage());
-        assertEquals("Пользователь по ID -4 не найден!", e2.getMessage());
+        assertEquals(0, friends.size());
     }
 }

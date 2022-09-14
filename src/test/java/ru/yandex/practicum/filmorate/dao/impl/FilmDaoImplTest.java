@@ -129,10 +129,10 @@ class FilmDaoImplTest {
 
     @Test
     void removeLikeWithWrongId() {
-        int result1 = filmDao.removeLike(-3, 1);
-        int result2 = filmDao.removeLike(3, -1);
+        NotFoundException e1 = assertThrows(NotFoundException.class, () -> filmDao.removeLike(-3, 1));
+        NotFoundException e2 = assertThrows(NotFoundException.class, () -> filmDao.removeLike(3, -1));
 
-        assertEquals(0, result1);
-        assertEquals(0, result2);
+        assertEquals("передан неверный идентификатор!", e1.getMessage());
+        assertEquals("передан неверный идентификатор!", e2.getMessage());
     }
 }
