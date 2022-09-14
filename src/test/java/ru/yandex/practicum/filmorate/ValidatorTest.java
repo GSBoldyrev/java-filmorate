@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -15,7 +16,8 @@ class ValidatorTest {
     @Test
     public void shouldNotValidateOldFilm() {
         Film veryOldFilm =
-                new Film("Name", "Description", LocalDate.of(1600, 11, 11), 1);
+                new Film("Name", "Description",
+                        LocalDate.of(1600, 11, 11), 1, new Mpa(1, "G"));
 
         BadRequestException e = assertThrows(BadRequestException.class, () -> validate(veryOldFilm));
         assertEquals("Кино еще не изобрели!", e.getMessage());
@@ -24,7 +26,8 @@ class ValidatorTest {
     @Test
     public void shouldValidateFirstFilm() {
         Film firstFilm =
-                new Film("Name", "Description", LocalDate.of(1895, 12, 28), 1);
+                new Film("Name", "Description",
+                        LocalDate.of(1895, 12, 28), 1, new Mpa(1, "G"));
 
         assertDoesNotThrow(() -> validate(firstFilm));
     }

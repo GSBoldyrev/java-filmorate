@@ -1,12 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import lombok.NonNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -20,10 +23,19 @@ public class Film {
     private final LocalDate releaseDate;
     @Positive
     private final int duration;
-
+    @NonNull
+    private final Mpa mpa;
+    private int rate;
+    private List<Genre> genres = new ArrayList<>();
     private Set<Integer> usersLiked = new HashSet<>();
 
-    private int likes = 0;
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -37,11 +49,11 @@ public class Film {
         this.usersLiked = usersLiked;
     }
 
-    public int getLikes() {
-        return likes;
+    public int getRate() {
+        return rate;
     }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 }
