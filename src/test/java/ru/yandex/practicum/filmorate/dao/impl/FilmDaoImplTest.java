@@ -13,7 +13,8 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmDaoImplTest {
 
     private final FilmDao filmDao;
+    private final LikesDaoImpl likesDao;
 
     @Test
     void add() {
@@ -103,15 +105,15 @@ class FilmDaoImplTest {
 
     @Test
     void addLike() {
-        int result = filmDao.addLike(3, 1);
+        int result = likesDao.add(3, 1);
 
         assertEquals(1, result);
     }
 
     @Test
     void addLikeWithWrongId() {
-        NotFoundException e1 = assertThrows(NotFoundException.class, () -> filmDao.addLike(-3, 1));
-        NotFoundException e2 = assertThrows(NotFoundException.class, () -> filmDao.addLike(3, -1));
+        NotFoundException e1 = assertThrows(NotFoundException.class, () -> likesDao.add(-3, 1));
+        NotFoundException e2 = assertThrows(NotFoundException.class, () -> likesDao.add(3, -1));
 
         assertEquals("передан неверный идентификатор!", e1.getMessage());
         assertEquals("передан неверный идентификатор!", e2.getMessage());
@@ -120,17 +122,17 @@ class FilmDaoImplTest {
     @Test
     void removeLike() {
         // Arrange
-        filmDao.addLike(4, 1);
+        likesDao.add(4, 1);
         // Act
-        int result = filmDao.removeLike(4, 1);
+        int result = likesDao.remove(4, 1);
         // Assert
         assertEquals(1, result);
     }
 
     @Test
     void removeLikeWithWrongId() {
-        NotFoundException e1 = assertThrows(NotFoundException.class, () -> filmDao.removeLike(-3, 1));
-        NotFoundException e2 = assertThrows(NotFoundException.class, () -> filmDao.removeLike(3, -1));
+        NotFoundException e1 = assertThrows(NotFoundException.class, () -> likesDao.remove(-3, 1));
+        NotFoundException e2 = assertThrows(NotFoundException.class, () -> likesDao.remove(3, -1));
 
         assertEquals("передан неверный идентификатор!", e1.getMessage());
         assertEquals("передан неверный идентификатор!", e2.getMessage());

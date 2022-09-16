@@ -23,7 +23,7 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public Genre getById(int id) {
-        String sqlQuery = "select genre_id, description from genres where genre_id = ?";
+        String sqlQuery = "SELECT genre_id, description FROM genres WHERE genre_id = ?";
         try {
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
         } catch (DataAccessException e) {
@@ -33,30 +33,30 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public List<Genre> getAll() {
-        String sqlQuery = "select genre_id, description from genres";
+        String sqlQuery = "SELECT genre_id, description FROM genres";
 
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
     }
 
     @Override
     public List<Genre> getForFilm(int filmId) {
-        String sqlQuery = "select genre_id, description from genres where genre_id in " +
-                "(select genre_id from movie_genre where film_id = ?)";
+        String sqlQuery = "SELECT genre_id, description FROM genres WHERE genre_id IN " +
+                "(SELECT genre_id FROM movie_genre WHERE film_id = ?)";
 
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenre, filmId);
     }
 
     @Override
     public void setForFilm(Set<Integer> genres, int filmId) {
-        String sqlQueryDelete = "delete from movie_genre where film_id = ?";
+        String sqlQueryDelete = "DELETE FROM movie_genre WHERE film_id = ?";
         jdbcTemplate.update(sqlQueryDelete, filmId);
-        for (Integer id: genres) {
-            String sqlQuery = "insert into movie_genre (film_id, genre_id) values (?, ?)";
+        for (Integer id : genres) {
+            String sqlQuery = "INSERT INTO movie_genre (film_id, genre_id) VALUES (?, ?)";
             jdbcTemplate.update(sqlQuery, filmId, id);
         }
     }
 
-    private Genre mapRowToGenre (ResultSet resultSet, int rowNum) throws SQLException {
+    private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
 
         return new Genre(resultSet.getInt("genre_id"), resultSet.getString("description"));
     }

@@ -12,7 +12,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserDaoImplTest {
 
     private final UserDao userDao;
+    private final FriendsDaoImpl friendsDao;
 
     @Test
     void add() {
@@ -90,15 +92,15 @@ class UserDaoImplTest {
 
     @Test
     void addFriend() {
-        int result = userDao.addFriend(1, 2);
+        int result = friendsDao.add(1, 2);
 
         assertEquals(1, result);
     }
 
     @Test
     void addFriendByWrongId() {
-        NotFoundException e1 = assertThrows(NotFoundException.class, () -> userDao.addFriend(-1, 2));
-        NotFoundException e2 = assertThrows(NotFoundException.class, () -> userDao.addFriend(1, -2));
+        NotFoundException e1 = assertThrows(NotFoundException.class, () -> friendsDao.add(-1, 2));
+        NotFoundException e2 = assertThrows(NotFoundException.class, () -> friendsDao.add(1, -2));
 
         assertEquals("передан неверный идентификатор!", e1.getMessage());
         assertEquals("передан неверный идентификатор!", e2.getMessage());
@@ -106,15 +108,15 @@ class UserDaoImplTest {
 
     @Test
     void removeFriend() {
-        int result = userDao.removeFriend(2, 4);
+        int result = friendsDao.remove(2, 4);
 
         assertEquals(1, result);
     }
 
     @Test
     void removeFriendWithWrongId() {
-       int result1 = userDao.removeFriend(-1, 2);
-       int result2 = userDao.removeFriend(1, -2);
+       int result1 = friendsDao.remove(-1, 2);
+       int result2 = friendsDao.remove(1, -2);
 
         assertEquals(0, result1);
         assertEquals(0, result2);

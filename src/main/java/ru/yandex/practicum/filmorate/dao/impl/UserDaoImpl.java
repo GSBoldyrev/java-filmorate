@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -27,7 +26,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User add(User user) {
-        String sqlQuery = "insert into users (e_mail, login, name, birthday) values (?, ?, ?, ?)";
+        String sqlQuery = "INSERT INTO users (e_mail, login, name, birthday) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(sqlQuery, new String[]{"user_id"});
@@ -44,7 +43,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User update(User user) {
-        String sqlQuery = "update users set e_mail = ?, login = ?, name = ?, birthday = ? where user_id = ?";
+        String sqlQuery = "UPDATE users SET e_mail = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
         int result = jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(),
                 user.getName(), user.getBirthday(), user.getId());
         if (result != 1) {
@@ -56,14 +55,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public int delete(int id) {
-        String sqlQuery = "delete from users where user_id = ?";
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
 
         return jdbcTemplate.update(sqlQuery, id);
     }
 
     @Override
     public User getById(int id) {
-        String sqlQuery = "select user_id, e_mail, login, name, birthday from users where user_id = ?";
+        String sqlQuery = "SELECT user_id, e_mail, login, name, birthday FROM users WHERE user_id = ?";
         try {
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
         } catch (DataAccessException e) {
@@ -73,47 +72,30 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAll() {
-        String sqlQuery = "select user_id, e_mail, login, name, birthday from users";
+        String sqlQuery = "SELECT user_id, e_mail, login, name, birthday FROM users";
 
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
     @Override
-    public int addFriend(int userId, int friendId) {
-        try {
-            String sqlQuery = "insert into friends (user_id, friend_id) values (?, ?)";
-            return jdbcTemplate.update(sqlQuery, userId, friendId);
-        } catch (DataIntegrityViolationException e) {
-            throw new NotFoundException("передан неверный идентификатор!");
-        }
+    public List<User> getFriends(int userId) {
+        String sqlQuery = "SELECT user_id, e_mail, login, name, birthday FROM users " +
+                "WHERE user_id IN (SELECT friend_id FROM friends WHERE user_id = ?)";
+
+        return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
     }
 
     @Override
-    public int removeFriend(int userId, int friendId) {
-        String sqlQuery = "delete from friends where user_id = ? and friend_id = ?";
+    public List<User> getMutualFriends(int userId, int friendId) {
+        String sqlQuery = "SELECT user_id, e_mail, login, name, birthday FROM users " +
+                "WHERE user_id IN " +
+                "(SELECT friend_id FROM friends WHERE user_id = ? AND friend_id NOT IN (?, ?) AND " +
+                "friend_id IN (SELECT friend_id FROM friends WHERE user_id = ?))";
 
-        return jdbcTemplate.update(sqlQuery, userId, friendId);
+        return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, friendId, userId, friendId);
     }
 
-    @Override
-    public List<User> getFriends (int userId) {
-        String sqlQuery = "select user_id, e_mail, login, name, birthday from users " +
-                "where user_id in (select friend_id from friends where user_id = ?)";
-
-            return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
-    }
-
-    @Override
-    public List<User> getMutualFriends (int userId, int friendId) {
-        String sqlQuery = "select user_id, e_mail, login, name, birthday from users " +
-                "where user_id in " +
-                "(select friend_id from friends where user_id = ? and friend_id not in (?, ?) and " +
-                "friend_id in (select friend_id from friends where user_id = ?))";
-
-            return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, friendId, userId, friendId);
-    }
-
-    private User mapRowToUser (ResultSet resultSet, int rowNum) throws SQLException {
+    private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {
         User user = new User(resultSet.getString("e_mail"),
                 resultSet.getString("login"), resultSet.getDate("birthday").toLocalDate());
         user.setName(resultSet.getString("name"));

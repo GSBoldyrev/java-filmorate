@@ -2,7 +2,9 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.ManyToManyDao;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -15,10 +17,12 @@ import static ru.yandex.practicum.filmorate.misc.Validator.validate;
 public class UserService {
 
     private final UserDao users;
+    private final ManyToManyDao friends;
 
     @Autowired
-    public UserService(UserDao users) {
+    public UserService(UserDao users, @Qualifier("friendsDaoImpl") ManyToManyDao friends) {
         this.users = users;
+        this.friends = friends;
     }
 
     public User add(User user) {
@@ -49,12 +53,12 @@ public class UserService {
         return users.getAll();
     }
 
-    public int addFriend(int userId, int friendId) {
-        return users.addFriend(userId, friendId);
+    public void addFriend(int userId, int friendId) {
+        friends.add(userId, friendId);
     }
 
-    public int removeFriend(int userId, int friendId) {
-        return users.removeFriend(userId, friendId);
+    public void removeFriend(int userId, int friendId) {
+        friends.remove(userId, friendId);
     }
 
     public List<User> getMutualFriends(int userId, int friendId) {
