@@ -75,6 +75,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     private int compare(Film f0, Film f1) {
-        return f1.getLikes() - f0.getLikes();
+
+        return f1.getRate() - f0.getRate();
     }
 }
